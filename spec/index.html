@@ -246,7 +246,7 @@ contributors: Lee Byron
                 List of ExportEntry Records
               </td>
               <td>
-                A List of ExportEntry records derived from the code of this module that correspond to reexported imports that occur within the module.
+                A List of ExportEntry records derived from the code of this module that correspond to reexported imports that occur within the module or direct exports from an export * as namespace.
               </td>
             </tr>
             <tr>
@@ -257,7 +257,7 @@ contributors: Lee Byron
                 List of ExportEntry Records
               </td>
               <td>
-                A List of ExportEntry records derived from the code of this module that correspond to export * declarations that occur within the module.
+                A List of ExportEntry records derived from the code of this module that correspond to export * declarations (but not export * as namespace declarations) that occur within the module.
               </td>
             </tr>
             <tr>
@@ -466,7 +466,7 @@ contributors: Lee Byron
                 [[ExportName]]
               </td>
               <td>
-                String
+                String | null
               </td>
               <td>
                 The name used to export this binding by this module.
@@ -856,7 +856,7 @@ contributors: Lee Byron
                 1. Else,
                   1. Let _resolution_ be ? _importedModule_.ResolveExport(_in_.[[ImportName]], &laquo; &raquo;).
                   1. If _resolution_ is *null* or `"ambiguous"`, throw a *SyntaxError* exception.
-                  1. <ins>If _resolution_.[[isNamespace]], then</ins>
+                  1. <ins>If _resolution_.[[isNamespace]] is *true*, then</ins>
                     1. <ins>Let _namespace_ be ? GetModuleNamespace(_resolution_.[[Module]]).</ins>
                     1. <ins>Perform ! _envRec_.CreateImmutableBinding(_in_.[[LocalName]], *true*).</ins>
                     1. <ins>Call _envRec_.InitializeBinding(_in_.[[LocalName]], _namespace_).</ins>
