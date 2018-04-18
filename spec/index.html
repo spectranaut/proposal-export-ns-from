@@ -885,8 +885,37 @@ contributors: Lee Byron
             </emu-alg>
           </emu-clause>
         </emu-clause>
-
       </emu-clause>
+      <emu-clause id="sec-getmodulenamespace" aoid="GetModuleNamespace">
+        <h1>Runtime Semantics: GetModuleNamespace( _module_ )</h1>
+
+        <p>The GetModuleNamespace abstract operation retrieves the the Module Namespace Exotic object representing _module_'s exports, lazily creating it the first time it was requested, and storing it in _module_.[[Namespace]] for future retrieval.</p>
+        
+        <p>This abstract operation performs the following steps:</p>
+
+        <emu-alg>
+          1. Assert: _module_ is an instance of a concrete subclass of Module Record.
+          1. Assert: _module_.[[Status]] is not `"uninstantiated"`.
+          1. Assert: If _module_.[[Status]] is `"evaluated"`, _module_.[[EvaluationError]] is *undefined*.
+          1. Let _namespace_ be _module_.[[Namespace]].
+          1. If _namespace_ is *undefined*, then
+            1. Let _exportedNames_ be ? _module_.GetExportedNames(&laquo; &raquo;).
+            1. Let _unambiguousNames_ be a new empty List.
+            1. For each _name_ that is an element of _exportedNames_, do
+              1. Let _resolution_ be ? _module_.ResolveExport(_name_, &laquo; &raquo;).
+              1. <ins>If _resolution_.[[isNamespace]] is *true*, then</ins>
+                1. <ins>TODO: is this the right place to make embeded namespaces?</ins>
+                1. <ins>Let _exportedNamespace_ be ? GetModuleNamespace(_resolution_.[[Module]]).</ins>
+                1. <ins>TODO: how can I get _exportedNamespace_ to be a property of _namespace_</ins>
+              1. If _resolution_ is a ResolvedBinding Record, append _name_ to _unambiguousNames_.
+            1. Set _namespace_ to ModuleNamespaceCreate(_module_, _unambiguousNames_).
+          1. Return _namespace_.
+        </emu-alg>
+        <emu-note>
+          <p>The only way GetModuleNamespace can throw is via one of the triggered HostResolveImportedModule calls. Unresolvable names are simply excluded from the namespace at this point. They will lead to a real instantiation error later unless they are all ambiguous star exports that are not explicitly requested anywhere.</p>
+        </emu-note>
+      </emu-clause>
+       
     </emu-clause>
 
     <!-- es6num="15.2.3" -->
